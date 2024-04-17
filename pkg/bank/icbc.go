@@ -2,10 +2,17 @@ package bank
 
 import (
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
+	"log"
+	"os"
+	"strings"
+)
+
+const (
+	name = "icbc"
 )
 
 func init() {
-	Registry.register("icbc", func() Plugin {
+	Registry.register(name, func() Plugin {
 		return &icbc{}
 	})
 }
@@ -13,10 +20,24 @@ func init() {
 type icbc struct {
 }
 
-func (i icbc) Name() string {
-	return "icbc"
+func (i icbc) PreProcess(csvData []byte) (*os.File, error) {
+	tmpFile, err := os.CreateTemp("", name)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = tmpFile.WriteString(strings.SplitN(string(csvData), "\n", 7)[6])
+	if err != nil {
+		return nil, err
+	}
+	log.Println(tmpFile.Name())
+	return tmpFile, nil
 }
 
-func (i icbc) ParseCSV(csvData []byte) ([]transaction.Transaction, error) {
+func (i icbc) Name() string {
+	return name
+}
+
+func (i icbc) ParseCSV(f *os.File) ([]transaction.Transaction, error) {
 	return []transaction.Transaction{}, nil
 }
