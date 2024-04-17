@@ -32,12 +32,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	tmpFilePath, err := bankPlugin.PreProcess(content)
+	csvString, err := bankPlugin.PreProcess(content)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	transactions, err := bankPlugin.ParseCSV(tmpFilePath)
+	transactions, err := bankPlugin.Parse(csvString)
 	if err != nil {
 		log.Fatalln(err)
 	}
