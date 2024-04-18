@@ -42,5 +42,8 @@ func (i icbc) Parse(data string) ([]transaction.Transaction, error) {
 }
 
 type t struct {
-	D string `csv:"交易日期"`
+	TranDate    string `csv:"交易日期"`
+	AccountDate string `csv:"记账日期"`
+	Abstract    string `csv:"摘要"`
+	Platform    string `csv:"交易场所"`
 }
