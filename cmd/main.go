@@ -25,6 +25,7 @@ func init() {
 func main() {
 	flag.Parse()
 	log.Println("bank:", bankName, "consumer:", consumerName)
+
 	bankPlugin, err := bank.Registry.Get(bankName)
 	if err != nil {
 		log.Fatalln(err)
