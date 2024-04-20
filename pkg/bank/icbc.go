@@ -9,13 +9,13 @@ import (
 	"strings"
 )
 
-const (
-	name = "icbc"
+var (
+	bankIcbc = &icbc{}
 )
 
 func init() {
-	Registry.register(name, func() Plugin {
-		return &icbc{}
+	Registry.register(bankIcbc.Name(), func() Plugin {
+		return bankIcbc
 	})
 }
 
@@ -30,7 +30,7 @@ func (i *icbc) PreProcess(data []byte) (string, error) {
 }
 
 func (i *icbc) Name() string {
-	return name
+	return "icbc"
 }
 
 func (i *icbc) Parse(data string) ([]transaction.Transaction, error) {

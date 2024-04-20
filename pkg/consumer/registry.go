@@ -1,4 +1,4 @@
-package bank
+package consumer
 
 import "fmt"
 
@@ -17,12 +17,12 @@ type registry struct {
 func (r *registry) Get(name string) (Plugin, error) {
 	c, ok := r.constructors[name]
 	if !ok {
-		return nil, fmt.Errorf("unknown bank: %s", name)
+		return nil, fmt.Errorf("unknown consumer: %s", name)
 	}
 
 	return c(), nil
 }
 
-func (r *registry) register(name string, c constructor) {
+func (r *registry) Register(name string, c constructor) {
 	r.constructors[name] = c
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/lwabish/transaction-mapper/pkg/bank"
+	"github.com/lwabish/transaction-mapper/pkg/consumer"
 	"log"
 	"os"
 )
@@ -45,4 +46,14 @@ func main() {
 	}
 
 	log.Println(transactions[0])
+
+	consumerPlugin, err := consumer.Registry.Get(consumerName)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = consumerPlugin.Transform(transactions, outputFileName)
+	if err != nil {
+		log.Println(err)
+	}
 }
