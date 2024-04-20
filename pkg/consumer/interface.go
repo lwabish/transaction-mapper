@@ -6,5 +6,5 @@ import (
 
 type Plugin interface {
 	Name() string
-	Transform(transactions []transaction.Transaction) ([]byte, error)
+	Transform(transactions []transaction.Transaction, path string) error
 }

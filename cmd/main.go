@@ -8,15 +8,17 @@ import (
 )
 
 var (
-	bankName      string
-	consumerName  string
-	inputFileName string
+	bankName       string
+	consumerName   string
+	inputFileName  string
+	outputFileName string
 )
 
 func init() {
 	flag.StringVar(&bankName, "bank", "", "bank identifier")
 	flag.StringVar(&consumerName, "consumer", "", "consumer identifier")
 	flag.StringVar(&inputFileName, "input", "dev.csv", "input file name")
+	flag.StringVar(&outputFileName, "output", "output.csv", "output file name")
 }
 
 func main() {
@@ -42,5 +44,5 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	log.Println(transactions)
+	log.Println(transactions[0])
 }

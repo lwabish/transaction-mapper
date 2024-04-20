@@ -1,8 +1,10 @@
 package bank
 
 import (
+	"fmt"
 	"github.com/lwabish/transaction-mapper/pkg/csv"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
+	"github.com/lwabish/transaction-mapper/pkg/util"
 	"log"
 	"strings"
 )
@@ -20,25 +22,40 @@ func init() {
 type icbc struct {
 }
 
-func (i icbc) PreProcess(data []byte) (string, error) {
+func (i *icbc) PreProcess(data []byte) (string, error) {
 	withoutHeader := strings.SplitN(string(data), "\n", 7)[6]
 	tmp := strings.SplitAfter(withoutHeader, "\n")
 	withoutTail := tmp[:len(tmp)-3]
 	return strings.ReplaceAll(strings.Join(withoutTail, ""), ",\r\n", "\r\n"), nil
 }
 
-func (i icbc) Name() string {
+func (i *icbc) Name() string {
 	return name
 }
 
-func (i icbc) Parse(data string) ([]transaction.Transaction, error) {
+func (i *icbc) Parse(data string) ([]transaction.Transaction, error) {
 	var ts []*t
 	err := csv.Parse(data, &ts)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println(ts[0])
-	return []transaction.Transaction{}, nil
+	var result []transaction.Transaction
+	for _, s := range ts {
+		tran := transaction.Transaction{
+			Date: s.TranDate,
+		}
+		if s.AccountAmountOutcome != "" {
+			tran.Amount = -1 * util.ParseFloat(s.AccountAmountOutcome)
+		} else {
+			tran.Amount = util.ParseFloat(s.AccountAmountIncome)
+		}
+		if s.AccountCurrency == "人民币" {
+			tran.CNY = true
+		}
+		tran.Description = fmt.Sprintf("%s:%s", s.Abstract, s.Platform)
+		result = append(result, tran)
+	}
+	return result, nil
 }
 
 // t 用LLM自动生成结构体 prompt如下
