@@ -18,7 +18,7 @@ var (
 func init() {
 	flag.StringVar(&bankName, "bank", "", "bank identifier")
 	flag.StringVar(&consumerName, "consumer", "", "consumer identifier")
-	flag.StringVar(&inputFileName, "input", "dev.csv", "input file name")
+	flag.StringVar(&inputFileName, "input", "templates/icbc.csv", "input file name")
 	flag.StringVar(&outputFileName, "output", "output.csv", "output file name")
 }
 
