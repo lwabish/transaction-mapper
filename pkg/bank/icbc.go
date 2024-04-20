@@ -1,7 +1,7 @@
 package bank
 
 import (
-	"github.com/gocarina/gocsv"
+	"github.com/lwabish/transaction-mapper/pkg/csv"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"log"
 	"strings"
@@ -33,7 +33,7 @@ func (i icbc) Name() string {
 
 func (i icbc) Parse(data string) ([]transaction.Transaction, error) {
 	var ts []*t
-	err := gocsv.UnmarshalString(data, &ts)
+	err := csv.Parse(data, &ts)
 	if err != nil {
 		log.Fatalln(err)
 	}
