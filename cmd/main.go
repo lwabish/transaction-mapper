@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/gocarina/gocsv"
 	"github.com/lwabish/transaction-mapper/pkg/bank"
 	"github.com/lwabish/transaction-mapper/pkg/consumer"
 	"log"
@@ -50,11 +51,16 @@ func main() {
 
 	consumerPlugin, err := consumer.Registry.Get(consumerName)
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 	}
 
-	err = consumerPlugin.Transform(transactions, outputFileName)
+	results, err := consumerPlugin.Transform(transactions)
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
+	}
+
+	err = gocsv.MarshalFile(results, os.Stdout)
+	if err != nil {
+		log.Fatalln(err)
 	}
 }

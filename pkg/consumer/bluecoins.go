@@ -21,8 +21,8 @@ func (b blueCoins) Name() string {
 	return "bluecoins"
 }
 
-func (b blueCoins) Transform(transactions []transaction.Transaction, path string) error {
-	return nil
+func (b blueCoins) Transform(transactions []transaction.Transaction) (interface{}, error) {
+	return []blueCoinsTransaction{}, nil
 }
 
 type blueCoinsTransaction struct {
