@@ -2,6 +2,8 @@ package consumer
 
 import (
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
+	"math"
+	"strconv"
 )
 
 var (
@@ -22,7 +24,24 @@ func (b blueCoins) Name() string {
 }
 
 func (b blueCoins) Transform(transactions []transaction.Transaction) (interface{}, error) {
-	return []blueCoinsTransaction{}, nil
+	var res []blueCoinsTransaction
+	for _, t := range transactions {
+		bt := blueCoinsTransaction{
+			Date:   t.Date,
+			Amount: strconv.FormatFloat(math.Abs(t.Amount), 'f', 2, 64),
+			Notes:  t.Description,
+		}
+		// fixme: 转账/退款
+		// todo: 分类 货币 账户
+		if t.Amount > 0 {
+			bt.Type = "i"
+		} else {
+			bt.Type = "e"
+		}
+
+		res = append(res, bt)
+	}
+	return res, nil
 }
 
 type blueCoinsTransaction struct {
