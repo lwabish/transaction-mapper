@@ -2,6 +2,7 @@ package consumer
 
 import (
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
+	"github.com/lwabish/transaction-mapper/pkg/util"
 	"log"
 	"math"
 	"strconv"
@@ -42,9 +43,8 @@ func (b blueCoins) Transform(transactions []transaction.Transaction, ai transact
 		if !t.CNY {
 			log.Printf("found transaction with non-cny currency: %+v", t)
 		}
-		// 二级分类，默认记为一日三餐，因为频率最高
-		bt.ParentCategory = "食"
-		bt.Category = "一日三餐"
+		// 二级分类
+		bt.ParentCategory, bt.Category = util.InferCategory(t)
 
 		// 二级账户
 		bt.AccountType = ai.Type
