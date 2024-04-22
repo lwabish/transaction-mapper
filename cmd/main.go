@@ -2,38 +2,36 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/gocarina/gocsv"
 	"github.com/lwabish/transaction-mapper/pkg/bank"
 	"github.com/lwabish/transaction-mapper/pkg/consumer"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"log"
 	"os"
+	"path"
+	"strings"
 )
 
 var (
-	bankName       string
-	consumerName   string
-	inputFileName  string
-	outputFileName string
-	accountType    string
-	accountName    string
+	consumerName  string
+	inputFileName string
 )
 
 func init() {
-	flag.StringVar(&bankName, "bank", "", "bank identifier")
 	flag.StringVar(&consumerName, "consumer", "", "consumer identifier")
-	flag.StringVar(&inputFileName, "input", "templates/icbc.csv", "input file name")
-	flag.StringVar(&outputFileName, "output", "output.csv", "output file name")
-	flag.StringVar(&accountType, "at", "", "account type")
-	flag.StringVar(&accountName, "an", "", "account name")
+	flag.StringVar(&inputFileName, "input", "", "input file name")
 }
 
 func main() {
 	flag.Parse()
-	if accountType == "" || accountName == "" {
+	if inputFileName == "" {
 		flag.Usage()
-		log.Fatalln("account type and account name are required")
+		log.Fatalln("inputFileName required")
 	}
+	fileName := path.Base(inputFileName)
+	bankName, ai := parseInfoFromFileName(fileName)
+
 	log.Println("bank:", bankName, "consumer:", consumerName)
 
 	bankPlugin, err := bank.Registry.Get(bankName)
@@ -63,15 +61,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	results, err := consumerPlugin.Transform(transactions, transaction.AccountInfo{
-		Type: accountType,
-		Name: accountName,
-	})
+	results, err := consumerPlugin.Transform(transactions, ai)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	outFile, err := os.OpenFile(outputFileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	outFile, err := os.OpenFile(fmt.Sprintf("%s-%s%s", strings.Split(fileName, ".")[0], consumerName, path.Ext(fileName)), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -79,5 +74,14 @@ func main() {
 	err = gocsv.MarshalFile(results, outFile)
 	if err != nil {
 		log.Fatalln(err)
+	}
+}
+
+func parseInfoFromFileName(fileName string) (string, transaction.AccountInfo) {
+	log.Printf("parsing info from file: %s", fileName)
+	parts := strings.SplitN(fileName, "-", 4)
+	return parts[0], transaction.AccountInfo{
+		Type: parts[1],
+		Name: parts[2],
 	}
 }
