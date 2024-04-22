@@ -25,7 +25,7 @@ type icbc struct {
 func (i *icbc) PreProcess(data []byte) (string, error) {
 	withoutHeader := strings.SplitN(string(data), "\n", 7)[6]
 	tmp := strings.SplitAfter(withoutHeader, "\n")
-	withoutTail := tmp[:len(tmp)-3]
+	withoutTail := tmp[:len(tmp)-2]
 	return strings.ReplaceAll(strings.Join(withoutTail, ""), ",\r\n", "\r\n"), nil
 }
 
