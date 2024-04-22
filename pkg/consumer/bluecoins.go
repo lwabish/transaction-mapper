@@ -2,6 +2,7 @@ package consumer
 
 import (
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
+	"log"
 	"math"
 	"strconv"
 )
@@ -23,7 +24,7 @@ func (b blueCoins) Name() string {
 	return "bluecoins"
 }
 
-func (b blueCoins) Transform(transactions []transaction.Transaction) (interface{}, error) {
+func (b blueCoins) Transform(transactions []transaction.Transaction, ai transaction.AccountInfo) (interface{}, error) {
 	var res []blueCoinsTransaction
 	for _, t := range transactions {
 		bt := blueCoinsTransaction{
@@ -32,12 +33,22 @@ func (b blueCoins) Transform(transactions []transaction.Transaction) (interface{
 			Notes:  t.Description,
 		}
 		// fixme: 转账/退款
-		// todo: 分类 货币 账户
 		if t.Amount > 0 {
 			bt.Type = "i"
 		} else {
 			bt.Type = "e"
 		}
+		// 货币：不填为默认货币，如果非默认货币，需要提供币种和汇率
+		if !t.CNY {
+			log.Printf("found transaction with non-cny currency: %+v", t)
+		}
+		// 二级分类，默认记为一日三餐，因为频率最高
+		bt.ParentCategory = "食"
+		bt.Category = "一日三餐"
+
+		// 二级账户
+		bt.AccountType = ai.Type
+		bt.Account = ai.Name
 
 		res = append(res, bt)
 	}

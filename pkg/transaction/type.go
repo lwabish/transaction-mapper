@@ -6,3 +6,8 @@ type Transaction struct {
 	CNY         bool
 	Description string
 }
+
+type AccountInfo struct {
+	Type string
+	Name string
+}
