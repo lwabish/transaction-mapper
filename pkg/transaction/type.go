@@ -1,7 +1,9 @@
 package transaction
 
+import "time"
+
 type Transaction struct {
-	Date        string
+	Time        time.Time
 	Amount      float64
 	CNY         bool
 	Description string

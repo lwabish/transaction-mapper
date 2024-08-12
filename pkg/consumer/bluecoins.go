@@ -6,7 +6,6 @@ import (
 	"log"
 	"math"
 	"strconv"
-	"time"
 )
 
 var (
@@ -34,11 +33,11 @@ func (b blueCoins) Transform(transactions []transaction.Transaction, ai transact
 			Notes:  t.Description,
 		}
 		// 日期
-		d, err := time.Parse("2006-01-02", t.Date)
-		if err != nil {
-			log.Println(err)
-		}
-		bt.Date = d.Format("01-02-2006")
+		//d, err := time.Parse("2006-01-02", t.Date)
+		//if err != nil {
+		//	log.Println(err)
+		//}
+		bt.Date = t.Time.Format("01-02-2006")
 		bt.ItemOrPayee = "自动导入"
 		// fixme: 转账/退款
 		if t.Amount > 0 {

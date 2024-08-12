@@ -7,6 +7,7 @@ import (
 	"github.com/lwabish/transaction-mapper/pkg/util"
 	"log"
 	"strings"
+	"time"
 )
 
 var (
@@ -41,9 +42,12 @@ func (i *icbc) Parse(data string) ([]transaction.Transaction, error) {
 	}
 	var result []transaction.Transaction
 	for _, s := range ts {
-		tran := transaction.Transaction{
-			Date: s.TranDate,
+		tran := transaction.Transaction{}
+		t, err := time.Parse("20060102", s.TranDate)
+		if err != nil {
+			log.Println(err)
 		}
+		tran.Time = t
 		if s.AccountAmountOutcome != "" {
 			tran.Amount = -1 * util.ParseFloat(s.AccountAmountOutcome)
 		} else {
