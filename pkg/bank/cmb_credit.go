@@ -114,7 +114,7 @@ func (d DetailBill) ParseTime() time.Time {
 }
 
 func (d DetailBill) ParseAmount() float64 {
-	return util.ParseFloat(d.TransactionAmount)
+	return -1*util.ParseFloat(d.TransactionAmount)
 }
 
 func (d DetailBill) ParseCNY() bool {
