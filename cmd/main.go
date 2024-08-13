@@ -44,12 +44,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	csvString, err := bankPlugin.PreProcess(content)
+	preProcessStr, err := bankPlugin.PreProcess(content)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	transactions, err := bankPlugin.Parse(csvString)
+	transactions, err := bankPlugin.Parse(preProcessStr)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -66,7 +66,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	outFile, err := os.OpenFile(fmt.Sprintf("%s-%s%s", strings.Split(fileName, ".")[0], consumerName, path.Ext(fileName)), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	outFile, err := os.OpenFile(fmt.Sprintf("%s-%s.csv", strings.Split(fileName, ".")[0], consumerName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		log.Fatalln(err)
 	}

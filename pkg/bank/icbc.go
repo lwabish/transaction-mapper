@@ -5,18 +5,19 @@ import (
 	"github.com/lwabish/transaction-mapper/pkg/csv"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"github.com/lwabish/transaction-mapper/pkg/util"
+	"github.com/samber/lo"
 	"log"
 	"strings"
 	"time"
 )
 
 var (
-	bankIcbc = &icbc{}
+	icbcIns = &icbc{}
 )
 
 func init() {
-	Registry.register(bankIcbc.Name(), func() Plugin {
-		return bankIcbc
+	Registry.register(icbcIns.Name(), func() Plugin {
+		return icbcIns
 	})
 }
 
@@ -35,31 +36,16 @@ func (i *icbc) Name() string {
 }
 
 func (i *icbc) Parse(data string) ([]transaction.Transaction, error) {
-	var ts []*t
+
+	var ts []icbcTxn
 	err := csv.Parse(data, &ts)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	var result []transaction.Transaction
-	for _, s := range ts {
-		tran := transaction.Transaction{}
-		t, err := time.Parse("20060102", s.TranDate)
-		if err != nil {
-			log.Println(err)
-		}
-		tran.Time = t
-		if s.AccountAmountOutcome != "" {
-			tran.Amount = -1 * util.ParseFloat(s.AccountAmountOutcome)
-		} else {
-			tran.Amount = util.ParseFloat(s.AccountAmountIncome)
-		}
-		if s.AccountCurrency == "人民币" {
-			tran.CNY = true
-		}
-		tran.Description = fmt.Sprintf("%s:%s", s.Abstract, s.Platform)
-		result = append(result, tran)
-	}
-	return result, nil
+
+	return transaction.NewTransactionFromProvider(
+		lo.Map(ts, func(item icbcTxn, index int) transaction.Provider { return item }),
+	), nil
 }
 
 // t 用LLM自动生成结构体 prompt如下
@@ -67,7 +53,7 @@ func (i *icbc) Parse(data string) ([]transaction.Transaction, error) {
 // 示例标题行：交易日期,记账日期,摘要,交易场所,交易国家或地区简称,交易金额(收入),交易金额(支出)
 // 示例结构体：
 // 注意：结构体的字段名称请根据标题行翻译成准确的英文，使用首字母大写的驼峰形式，类型全部是string
-type t struct {
+type icbcTxn struct {
 	TranDate             string `csv:"交易日期"`
 	AccountDate          string `csv:"记账日期"`
 	Abstract             string `csv:"摘要"`
@@ -81,4 +67,30 @@ type t struct {
 	AccountCurrency      string `csv:"记账币种"`
 	Balance              string `csv:"余额"`
 	CounterpartyName     string `csv:"对方户名"`
+}
+
+func (i icbcTxn) ParseTime() time.Time {
+	t, err := time.Parse("20060102", i.TranDate)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return t
+}
+
+func (i icbcTxn) ParseAmount() float64 {
+	return lo.Ternary(i.AccountAmountOutcome != "",
+		-1*util.ParseFloat(i.AccountAmountOutcome),
+		util.ParseFloat(i.AccountAmountIncome),
+	)
+}
+
+func (i icbcTxn) ParseCNY() bool {
+	if i.AccountCurrency == "人民币" {
+		return true
+	}
+	return false
+}
+
+func (i icbcTxn) ParseDescription() string {
+	return fmt.Sprintf("%s:%s", i.Abstract, i.Platform)
 }
