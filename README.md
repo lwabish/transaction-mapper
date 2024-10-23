@@ -11,7 +11,7 @@
 
 # usage
 
-1. 从银行导出交易明细文件呢
+1. 从银行导出交易明细文件
 2. 按照如下规则重命名，主要为了设定导入账户： `$bankType-$account-$subaccount-other.csv`
 3. 运行命令，完成转换
     ```commandline
