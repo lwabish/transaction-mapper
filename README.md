@@ -3,8 +3,8 @@
 将从各银行导出的交易明细转换成记账软件的模板，以供导入记账
 
 目前支持的银行:
-- [ICBC](https://mybank.icbc.com.cn/icbc/newperbank/perbank3/frame/frame_index.jsp)
-- [CMB](https://www.cmbchina.com/)
+- [中国工商银行](https://mybank.icbc.com.cn/icbc/newperbank/perbank3/frame/frame_index.jsp)
+- [招商银行](https://www.cmbchina.com/)
 
 目前支持的记账app:
 - [Bluecoins](https://www.bluecoinsapp.com/)
