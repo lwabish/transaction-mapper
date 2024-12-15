@@ -1,8 +1,8 @@
 package consumer
 
 import (
+	"github.com/lwabish/transaction-mapper/pkg/category"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
-	"github.com/lwabish/transaction-mapper/pkg/util"
 	"log"
 	"math"
 	"strconv"
@@ -50,7 +50,7 @@ func (b blueCoins) Transform(transactions []transaction.Transaction, ai transact
 			log.Printf("found transaction with non-cny currency: %+v", t)
 		}
 		// 二级分类
-		bt.ParentCategory, bt.Category = util.InferCategory(t)
+		bt.ParentCategory, bt.Category = category.Category.Infer(t)
 
 		// 二级账户
 		bt.AccountType = ai.Type

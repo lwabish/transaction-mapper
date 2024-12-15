@@ -7,4 +7,7 @@ require (
 	github.com/samber/lo v1.46.0
 )
 
-require golang.org/x/text v0.16.0 // indirect
+require (
+	golang.org/x/text v0.16.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
