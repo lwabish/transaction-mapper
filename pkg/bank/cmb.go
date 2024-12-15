@@ -5,6 +5,7 @@ import (
 	"github.com/lwabish/transaction-mapper/pkg/csv"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"github.com/lwabish/transaction-mapper/pkg/util"
+	"github.com/samber/lo"
 	"log"
 	"strings"
 	"time"
@@ -28,29 +29,12 @@ func (in *cmb) Name() string {
 }
 
 func (in *cmb) Parse(data string) ([]transaction.Transaction, error) {
-	var ts []*cmbTxn
+	var ts []cmbTxn
 	err := csv.Parse(data, &ts)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	var result []transaction.Transaction
-	for _, s := range ts {
-		tran := transaction.Transaction{}
-		t, err := time.Parse("20060102 15:04:05", fmt.Sprintf("%s %s", s.TranDate, s.TranTime))
-		if err != nil {
-			log.Println(err)
-		}
-		tran.Time = t
-		if s.Outcome != "" {
-			tran.Amount = -1 * util.ParseFloat(s.Outcome)
-		} else {
-			tran.Amount = util.ParseFloat(s.Income)
-		}
-		tran.CNY = true
-		tran.Description = fmt.Sprintf("%s:%s", s.TranType, s.TranRemark)
-		result = append(result, tran)
-	}
-	return result, nil
+	return transaction.NewTransactionFromProvider(lo.Map(ts, func(item cmbTxn, index int) transaction.Provider { return item })), nil
 }
 
 func (in *cmb) PreProcess(data []byte) (string, error) {
@@ -69,4 +53,28 @@ type cmbTxn struct {
 	Balance    string `csv:"余额"`
 	TranType   string `csv:"交易类型"`
 	TranRemark string `csv:"交易备注"`
+}
+
+func (c cmbTxn) ParseTime() time.Time {
+	t, err := time.Parse("20060102 15:04:05", fmt.Sprintf("%s %s", c.TranDate, c.TranTime))
+	if err != nil {
+		log.Println(err)
+	}
+	return t
+}
+
+func (c cmbTxn) ParseAmount() float64 {
+	if c.Outcome != "" {
+		return -1 * util.ParseFloat(c.Outcome)
+	} else {
+		return util.ParseFloat(c.Income)
+	}
+}
+
+func (c cmbTxn) ParseCNY() bool {
+	return true
+}
+
+func (c cmbTxn) ParseDescription() string {
+	return fmt.Sprintf("%s:%s", c.TranType, c.TranRemark)
 }
