@@ -1,3 +1,4 @@
+#todo: 配置转账类解析（对手账户）
 dualLevel: true
 levelSplitter: '|'
 default: "食|一日三餐"

@@ -77,6 +77,7 @@ func main() {
 	}
 }
 
+// todo: 参数传入
 func parseInfoFromFileName(fileName string) (string, transaction.AccountInfo) {
 	log.Printf("parsing info from file: %s", fileName)
 	parts := strings.SplitN(fileName, "-", 4)
