@@ -20,8 +20,8 @@ type config struct {
 type transferAccountRule struct {
 	Account       string `yaml:"account"`
 	Keyword       string `yaml:"keyword"`
-	toAccountType string `yaml:"toAccountType"`
-	toAccountName string `yaml:"toAccountName"`
+	ToAccountType string `yaml:"toAccountType"`
+	ToAccountName string `yaml:"toAccountName"`
 }
 
 var (
@@ -56,7 +56,7 @@ func (c *config) InferTransferToAccount(t transaction.Transaction, ai transactio
 	for _, rule := range c.TransferAccountRules {
 		if rule.Account == ai.Name {
 			if strings.Contains(t.Description, rule.Keyword) {
-				return rule.toAccountType, rule.toAccountName
+				return rule.ToAccountType, rule.ToAccountName
 			}
 		}
 	}

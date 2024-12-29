@@ -1,8 +1,8 @@
 transferAccountRules:
-  - account: 储蓄卡
+  - account: 招商银行6231
     keyword: 信用卡自动还款
     toAccountType: 信用卡
-    toAccountName: ssss
+    toAccountName: 【信用卡】招商银行
 dualLevel: true
 levelSplitter: '|'
 default: "食|一日三餐"

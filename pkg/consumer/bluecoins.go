@@ -1,6 +1,7 @@
 package consumer
 
 import (
+	"fmt"
 	"github.com/lwabish/transaction-mapper/pkg/config"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"github.com/samber/lo"
@@ -49,6 +50,8 @@ func (b *blueCoins) Transform(transactions []transaction.Transaction, ai transac
 			bt.Type = "t"
 			bt.toAccountType = toAccountType
 			bt.toAccountName = toAccountName
+			bt.Amount = fmt.Sprintf("-%s", bt.Amount)
+			bt.ParentCategory, bt.Category = "(Transfer)", "(Transfer)"
 		} else if item.Amount > 0 {
 			bt.Type = "i"
 		} else if item.Amount < 0 {
