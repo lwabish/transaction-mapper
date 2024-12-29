@@ -18,9 +18,10 @@ type config struct {
 }
 
 type transferAccountRule struct {
-	Account   string `yaml:"account"`
-	Keyword   string `yaml:"keyword"`
-	toAccount string `yaml:"toAccount"`
+	Account       string `yaml:"account"`
+	Keyword       string `yaml:"keyword"`
+	toAccountType string `yaml:"toAccountType"`
+	toAccountName string `yaml:"toAccountName"`
 }
 
 var (
@@ -51,15 +52,15 @@ func (c *config) InferCategory(t transaction.Transaction) (string, string) {
 	return c.inferByRules(t.Description)
 }
 
-func (c *config) InferTransferToAccount(t transaction.Transaction, ai transaction.AccountInfo) string {
+func (c *config) InferTransferToAccount(t transaction.Transaction, ai transaction.AccountInfo) (string, string) {
 	for _, rule := range c.TransferAccountRules {
 		if rule.Account == ai.Name {
 			if strings.Contains(t.Description, rule.Keyword) {
-				return rule.toAccount
+				return rule.toAccountType, rule.toAccountName
 			}
 		}
 	}
-	return ""
+	return "", ""
 }
 
 func (c *config) inferByRules(desc string) (string, string) {

@@ -17,7 +17,8 @@ type Provider interface {
 type Transaction struct {
 	Time time.Time
 	// >0 支出; <0 收入
-	Amount      float64
+	Amount float64
+	// 货币：不填为默认货币，todo: 如果非默认货币，需要提供币种和汇率
 	CNY         bool
 	Description string
 }

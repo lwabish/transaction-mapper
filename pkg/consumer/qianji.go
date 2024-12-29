@@ -19,16 +19,16 @@ func init() {
 
 type qianJi struct{}
 
-func (q qianJi) Name() string {
+func (q *qianJi) Name() string {
 	return "qianji"
 }
 
-func (q qianJi) Transform(transactions []transaction.Transaction, info transaction.AccountInfo) (interface{}, error) {
+func (q *qianJi) Transform(transactions []transaction.Transaction, info transaction.AccountInfo) (interface{}, error) {
 	result := lo.Map[transaction.Transaction, qianJiTransaction](transactions, func(item transaction.Transaction, index int) qianJiTransaction {
 		_, c := config.Config.InferCategory(item)
 
 		var tType, counterpartAccount string
-		if toAccount := config.Config.InferTransferToAccount(item, info); toAccount != "" {
+		if _, toAccount := config.Config.InferTransferToAccount(item, info); toAccount != "" {
 			tType = "转账"
 			counterpartAccount = toAccount
 		} else if item.Amount > 0 {

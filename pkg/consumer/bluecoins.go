@@ -3,9 +3,11 @@ package consumer
 import (
 	"github.com/lwabish/transaction-mapper/pkg/config"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
+	"github.com/samber/lo"
 	"log"
 	"math"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -21,44 +23,55 @@ func init() {
 type blueCoins struct {
 }
 
-func (b blueCoins) Name() string {
+func (b *blueCoins) Name() string {
 	return "bluecoins"
 }
 
-func (b blueCoins) Transform(transactions []transaction.Transaction, ai transaction.AccountInfo) (interface{}, error) {
+func (b *blueCoins) Transform(transactions []transaction.Transaction, ai transaction.AccountInfo) (interface{}, error) {
 	var res []blueCoinsTransaction
-	for _, t := range transactions {
-		bt := blueCoinsTransaction{
-			Amount: strconv.FormatFloat(math.Abs(t.Amount), 'f', 2, 64),
-			Notes:  t.Description,
-		}
-		// 日期
-		//d, err := time.Parse("2006-01-02", t.Date)
-		//if err != nil {
-		//	log.Println(err)
-		//}
-		bt.Date = t.Time.Format("01-02-2006")
-		bt.ItemOrPayee = "自动导入"
-		// fixme: 转账/退款
-		if t.Amount > 0 {
-			bt.Type = "i"
-		} else {
-			bt.Type = "e"
-		}
-		// 货币：不填为默认货币，如果非默认货币，需要提供币种和汇率
-		if !t.CNY {
-			log.Printf("found transaction with non-cny currency: %+v", t)
+	res = lo.Map[transaction.Transaction, blueCoinsTransaction](transactions, func(item transaction.Transaction, index int) blueCoinsTransaction {
+		if !item.CNY {
+			log.Printf("found transaction with non-cny currency: %+v", item)
 		}
 		// 二级分类
-		bt.ParentCategory, bt.Category = config.Config.InferCategory(t)
+		parentCategory, category := config.Config.InferCategory(item)
+		bt := blueCoinsTransaction{
+			Amount:         strconv.FormatFloat(math.Abs(item.Amount), 'f', 2, 64),
+			Notes:          item.Description,
+			Date:           item.Time.Format("01-02-2006"),
+			ItemOrPayee:    "自动导入",
+			ParentCategory: parentCategory,
+			Category:       category,
+			AccountType:    ai.Type,
+			Account:        ai.Name,
+		}
+		if toAccountType, toAccountName := config.Config.InferTransferToAccount(item, ai); toAccountName != "" {
+			bt.Type = "t"
+			bt.toAccountType = toAccountType
+			bt.toAccountName = toAccountName
+		} else if item.Amount > 0 {
+			bt.Type = "i"
+		} else if item.Amount < 0 {
+			bt.Type = "e"
+		}
+		return bt
+	})
+	return b.appendTransferTransaction(res), nil
+}
 
-		// 二级账户
-		bt.AccountType = ai.Type
-		bt.Account = ai.Name
-
-		res = append(res, bt)
-	}
-	return res, nil
+func (b *blueCoins) appendTransferTransaction(bts []blueCoinsTransaction) []blueCoinsTransaction {
+	var res []blueCoinsTransaction
+	copy(bts, res)
+	lo.ForEach[blueCoinsTransaction](bts, func(item blueCoinsTransaction, index int) {
+		res = append(res, item)
+		if item.Type == "t" {
+			log.Printf("found transfer transaction: %+v", item)
+			item.Amount = strings.ReplaceAll(item.Amount, "-", "")
+			item.AccountType, item.Account = item.toAccountType, item.toAccountName
+			res = append(res, item)
+		}
+	})
+	return res
 }
 
 type blueCoinsTransaction struct {
@@ -76,4 +89,6 @@ type blueCoinsTransaction struct {
 	Label          string `csv:"(12) Label"`
 	Status         string `csv:"(13) Status"`
 	Split          string `csv:"(14) Split"`
+	toAccountType  string
+	toAccountName  string
 }
