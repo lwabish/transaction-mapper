@@ -17,12 +17,9 @@ type Provider interface {
 type Transaction struct {
 	Time time.Time
 	// >0 支出; <0 收入
-	Amount float64
-	CNY    bool
-	// todo: 所有的bank plugin实现parsing, consumer即可支持转账
-	// 转账涉及到的对方账户
-	TransferAccount string
-	Description     string
+	Amount      float64
+	CNY         bool
+	Description string
 }
 
 func NewTransactionFromProvider(p []Provider) []Transaction {

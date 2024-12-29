@@ -9,11 +9,18 @@ import (
 )
 
 type config struct {
-	DualLevel          bool                `yaml:"dualLevel"`
-	LevelSplitter      string              `yaml:"levelSplitter"`
-	Rules              map[string][]string `yaml:"rules"`
-	Default            string              `yaml:"default"`
-	keywordsToCategory map[string]string
+	DualLevel            bool                  `yaml:"dualLevel"`
+	LevelSplitter        string                `yaml:"levelSplitter"`
+	Rules                map[string][]string   `yaml:"rules"`
+	Default              string                `yaml:"default"`
+	TransferAccountRules []transferAccountRule `yaml:"transferAccountRules"`
+	keywordsToCategory   map[string]string
+}
+
+type transferAccountRule struct {
+	Account   string `yaml:"account"`
+	Keyword   string `yaml:"keyword"`
+	toAccount string `yaml:"toAccount"`
 }
 
 var (
@@ -42,6 +49,17 @@ func init() {
 
 func (c *config) InferCategory(t transaction.Transaction) (string, string) {
 	return c.inferByRules(t.Description)
+}
+
+func (c *config) InferTransferToAccount(t transaction.Transaction, ai transaction.AccountInfo) string {
+	for _, rule := range c.TransferAccountRules {
+		if rule.Account == ai.Name {
+			if strings.Contains(t.Description, rule.Keyword) {
+				return rule.toAccount
+			}
+		}
+	}
+	return ""
 }
 
 func (c *config) inferByRules(desc string) (string, string) {

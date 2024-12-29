@@ -1,4 +1,7 @@
-#todo: 配置转账类解析（对手账户）
+transferAccountRules:
+  - account: 储蓄卡
+    keyword: 还信用卡
+    toAccount: 信用卡
 dualLevel: true
 levelSplitter: '|'
 default: "食|一日三餐"

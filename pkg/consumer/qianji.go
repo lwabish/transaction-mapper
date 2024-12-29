@@ -28,9 +28,9 @@ func (q qianJi) Transform(transactions []transaction.Transaction, info transacti
 		_, c := config.Config.InferCategory(item)
 
 		var tType, counterpartAccount string
-		if item.TransferAccount != "" {
+		if toAccount := config.Config.InferTransferToAccount(item, info); toAccount != "" {
 			tType = "转账"
-			counterpartAccount = item.TransferAccount
+			counterpartAccount = toAccount
 		} else if item.Amount > 0 {
 			tType = "支出"
 		} else {
