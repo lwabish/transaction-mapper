@@ -27,9 +27,9 @@
 
 ## 使用方式
 
-1. 配置category.yaml（交易分类规则）
-2. 从银行导出交易明细文件
-3. 按照如下规则重命名，主要为了设定导入账户： `$bankType-$account-$subaccount-other.csv`
+1. 从银行导出交易明细文件
+2. 按照如下规则重命名，主要为了设定导入账户： `$bankType-$account-$subaccount-other.csv`
+3. 配置config.yaml
 4. 运行命令，完成转换
     ```commandline
     # 工行信用卡/储蓄卡(icbc+bluecoins)
@@ -46,11 +46,11 @@
 
 # todo
 
-1. 支持解析转账类交易
-2. 支持跳过某些对冲类交易
-3. 更优雅的账户设置方案（参考分类的方法，最终演变为综合的配置文件）
-4. 支持钱迹
-5. 文档：各银行导出的方法
-6. release binary
-7. flag parser & cmd
-8. 前端界面
+- ✅支持解析转账类交易
+- 支持跳过某些对冲类交易
+- 更优雅的账户设置方案（参考分类的方法，最终演变为综合的配置文件）
+- ✅支持钱迹
+- 文档：各银行导出的方法
+- release binary
+- flag parser & cmd
+- 前端界面
