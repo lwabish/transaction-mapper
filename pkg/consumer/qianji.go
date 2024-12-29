@@ -1,7 +1,7 @@
 package consumer
 
 import (
-	"github.com/lwabish/transaction-mapper/pkg/category"
+	"github.com/lwabish/transaction-mapper/pkg/config"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"github.com/samber/lo"
 	"math"
@@ -25,7 +25,7 @@ func (q qianJi) Name() string {
 
 func (q qianJi) Transform(transactions []transaction.Transaction, info transaction.AccountInfo) (interface{}, error) {
 	result := lo.Map[transaction.Transaction, qianJiTransaction](transactions, func(item transaction.Transaction, index int) qianJiTransaction {
-		_, c := category.Category.Infer(item)
+		_, c := config.Config.InferCategory(item)
 
 		var tType, counterpartAccount string
 		if item.TransferAccount != "" {

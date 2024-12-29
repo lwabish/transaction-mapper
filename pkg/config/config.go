@@ -1,7 +1,6 @@
-package category
+package config
 
 import (
-	_ "embed"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"gopkg.in/yaml.v3"
 	"log"
@@ -9,7 +8,7 @@ import (
 	"strings"
 )
 
-type category struct {
+type config struct {
 	DualLevel          bool                `yaml:"dualLevel"`
 	LevelSplitter      string              `yaml:"levelSplitter"`
 	Rules              map[string][]string `yaml:"rules"`
@@ -18,34 +17,34 @@ type category struct {
 }
 
 var (
-	Category = &category{
+	Config = &config{
 		Rules:              make(map[string][]string),
 		keywordsToCategory: make(map[string]string),
 	}
 )
 
 func init() {
-	log.Println("load category rules from file")
-	bs, err := os.ReadFile("category.yaml")
+	log.Println("load config rules from file")
+	bs, err := os.ReadFile("config.yaml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = yaml.Unmarshal(bs, &Category)
+	err = yaml.Unmarshal(bs, &Config)
 	if err != nil {
 		log.Fatal(err)
 	}
-	for key, value := range Category.Rules {
+	for key, value := range Config.Rules {
 		for _, v := range value {
-			Category.keywordsToCategory[v] = key
+			Config.keywordsToCategory[v] = key
 		}
 	}
 }
 
-func (c *category) Infer(t transaction.Transaction) (string, string) {
+func (c *config) InferCategory(t transaction.Transaction) (string, string) {
 	return c.inferByRules(t.Description)
 }
 
-func (c *category) inferByRules(desc string) (string, string) {
+func (c *config) inferByRules(desc string) (string, string) {
 	for k, v := range c.keywordsToCategory {
 		if strings.Contains(desc, k) {
 			if c.DualLevel {
