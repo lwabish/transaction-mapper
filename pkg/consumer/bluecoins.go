@@ -77,6 +77,7 @@ func (b *blueCoins) appendTransferTransaction(bts []blueCoinsTransaction) []blue
 	return res
 }
 
+// https://drive.google.com/file/d/1rpGg48aZLrhIYRK3JK46M8REOaqJf0C6/view
 type blueCoinsTransaction struct {
 	Type           string `csv:"(1)Type"`
 	Date           string `csv:"(2)Date"`
