@@ -31,7 +31,7 @@
 2. 按照如下规则重命名，主要为了设定导入账户： `$bankType-$account-$subaccount-other.csv`
 3. 配置config.yaml
 4. 运行命令，完成转换
-    ```commandline
+    ```bash
     # 工行信用卡/储蓄卡(icbc+bluecoins)
     go run main.go -c bluecoins -i icbc-信用卡-【信用卡】工商银行-240714.csv 
     
