@@ -54,7 +54,7 @@ var serveCmd = &cobra.Command{
 				return
 			}
 
-			dstFile := fmt.Sprintf("%s-%d-%s.csv", path.Base(formFile.Filename), time.Now().Unix(), arg.Consumer)
+			dstFile := fmt.Sprintf("%s-%d-%s.csv", path.Base(formFile.Filename), time.Now().Unix(), arg.App)
 			if err := runEngine(arg, content, dstFile); err != nil {
 				log.Printf("run engine error: %s", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

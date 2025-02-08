@@ -11,7 +11,7 @@ import (
 )
 
 func runEngine(a *arg, inputFile []byte, dst string) error {
-	consumerName, bankName := a.Consumer, a.Bank
+	consumerName, bankName := a.App, a.Bank
 	ai := transaction.AccountInfo{
 		Name: a.Account,
 		Type: a.AccountType,

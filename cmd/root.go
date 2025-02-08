@@ -24,7 +24,7 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-		dst := fmt.Sprintf("%s-%s.csv", strings.Split(path.Base(inputFileName), ".")[0], rootArg.Consumer)
+		dst := fmt.Sprintf("%s-%s.csv", strings.Split(path.Base(inputFileName), ".")[0], rootArg.App)
 		if err := runEngine(rootArg, content, dst); err != nil {
 			log.Fatalln(err)
 		}
@@ -50,12 +50,12 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().StringVarP(&rootArg.input, "input", "i", rootArg.input, "input file path")
-	rootCmd.Flags().StringVarP(&rootArg.Consumer, "consumer", "c", rootArg.Consumer, "consumer app name")
+	rootCmd.Flags().StringVarP(&rootArg.App, "app", "a", rootArg.App, "app name")
 	rootCmd.Flags().StringVarP(&rootArg.Bank, "bank", "b", rootArg.Bank, "bank name")
 	rootCmd.Flags().StringVarP(&rootArg.AccountType, "account-type", "z", rootArg.AccountType, "[optional]account type")
-	rootCmd.Flags().StringVarP(&rootArg.Account, "account", "a", rootArg.Account, "account name")
-	rootCmd.Flags().StringVarP(&rootArg.config, "config", "f", rootArg.config, "config file path")
+	rootCmd.Flags().StringVarP(&rootArg.Account, "account", "t", rootArg.Account, "account name")
+	rootCmd.Flags().StringVarP(&rootArg.config, "config", "c", rootArg.config, "config file path")
 
 	_ = rootCmd.MarkFlagRequired("input")
-	rootCmd.MarkFlagsRequiredTogether("input", "consumer", "bank", "account")
+	rootCmd.MarkFlagsRequiredTogether("input", "app", "bank", "account")
 }
