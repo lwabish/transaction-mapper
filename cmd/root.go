@@ -14,22 +14,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	rootArg = struct {
+		input       string
+		consumer    string
+		bank        string
+		account     string
+		accountType string
+	}{}
+)
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "transaction-mapper",
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputFileName, _ := cmd.Flags().GetString("input")
-		consumerName, _ := cmd.Flags().GetString("consumer")
-		if inputFileName == "" || consumerName == "" {
-			_ = cmd.Help()
-			os.Exit(1)
+		inputFileName, consumerName, bankName := rootArg.input, rootArg.consumer, rootArg.bank
+		ai := transaction.AccountInfo{
+			Name: rootArg.account,
+			Type: rootArg.accountType,
 		}
-		fileName := path.Base(inputFileName)
-		bankName, ai := parseInfoFromFileName(fileName)
-
-		log.Println("bank:", bankName, "consumer:", consumerName)
+		log.Printf("args: %v", rootArg)
 
 		bankPlugin, err := bank.Registry.Get(bankName)
 		if err != nil {
@@ -63,7 +69,7 @@ var rootCmd = &cobra.Command{
 			log.Fatalln(err)
 		}
 
-		outFile, err := os.OpenFile(fmt.Sprintf("%s-%s.csv", strings.Split(fileName, ".")[0], consumerName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+		outFile, err := os.OpenFile(fmt.Sprintf("%s-%s.csv", strings.Split(path.Base(inputFileName), ".")[0], consumerName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -93,16 +99,12 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().StringP("input", "i", "", "input file path")
-	rootCmd.Flags().StringP("consumer", "c", "", "consumer app name")
+	rootCmd.Flags().StringVarP(&rootArg.input, "input", "i", rootArg.input, "input file path")
+	rootCmd.Flags().StringVarP(&rootArg.consumer, "consumer", "c", rootArg.consumer, "consumer app name")
+	rootCmd.Flags().StringVarP(&rootArg.bank, "bank", "b", rootArg.bank, "bank name")
+	rootCmd.Flags().StringVarP(&rootArg.accountType, "account-type", "z", rootArg.accountType, "[optional]account type")
+	rootCmd.Flags().StringVarP(&rootArg.account, "account", "a", rootArg.account, "account name")
 
-}
-
-func parseInfoFromFileName(fileName string) (string, transaction.AccountInfo) {
-	log.Printf("parsing info from file: %s", fileName)
-	parts := strings.SplitN(fileName, "-", 4)
-	return parts[0], transaction.AccountInfo{
-		Type: parts[1],
-		Name: parts[2],
-	}
+	_ = rootCmd.MarkFlagRequired("input")
+	rootCmd.MarkFlagsRequiredTogether("input", "consumer", "bank", "account")
 }

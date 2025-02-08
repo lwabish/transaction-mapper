@@ -28,28 +28,27 @@
 ## 使用方式
 
 1. 从银行导出交易明细文件
-2. 按照如下规则重命名，主要为了设定导入账户： `$bankType-$account-$subaccount-other.csv`
-3. 配置config.yaml
-4. 运行命令，完成转换
+2. 运行命令，完成转换(`go run main.go -h`查看完整命令帮助)
     ```bash
-    # 工行信用卡/储蓄卡(icbc+bluecoins)
-    go run main.go -c bluecoins -i icbc-信用卡-【信用卡】工商银行-240714.csv 
-    
     # 招行信用卡(cmbCredit+bluecoins)
-    go run main.go -c bluecoins -i cmbCredit-信用卡-【信用卡】招商银行-2407.json
-    
+    go run main.go \
+      -i cmbCredit-2501.json \
+      -b cmbCredit \
+      -c bluecoins \
+      -z 信用卡 \
+      -a 【信用卡】招商银行
+    # 更多组合：
+    # 工行信用卡/储蓄卡(icbc+bluecoins)
     # 招行储蓄卡(cmb+bluecoins)
-    go run main.go -c bluecoins -i cmb-现金-【借记卡】招商银行-2407.csv
     ```
-5. 将生成的模板导入到记账app中
-6. 调整未能自动推断的分类
+3. 将生成的模板导入到记账app中
 
 # todo
 
 - ✅支持解析转账类交易
 - ✅支持钱迹
 - ✅cobra flag parser & multi cmd
-- 更优雅的账户设置方案（参考分类的方法，最终演变为综合的配置文件）
+- ✅账户信息页从flag中解析
 - 支持跳过某些对冲类交易
 - 文档：各银行导出的方法
 - release binary
