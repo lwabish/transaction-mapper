@@ -1,6 +1,9 @@
 package consumer
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/lwabish/transaction-mapper/pkg/config"
+)
 
 var (
 	Registry = &registry{
@@ -8,19 +11,19 @@ var (
 	}
 )
 
-type constructor func() Plugin
+type constructor func(*config.Config) Plugin
 
 type registry struct {
 	constructors map[string]constructor
 }
 
-func (r *registry) Get(name string) (Plugin, error) {
+func (r *registry) Get(name string, config *config.Config) (Plugin, error) {
 	c, ok := r.constructors[name]
 	if !ok {
 		return nil, fmt.Errorf("unknown consumer: %s", name)
 	}
 
-	return c(), nil
+	return c(config), nil
 }
 
 func (r *registry) Register(name string, c constructor) {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gocarina/gocsv"
 	"github.com/lwabish/transaction-mapper/pkg/bank"
+	"github.com/lwabish/transaction-mapper/pkg/config"
 	"github.com/lwabish/transaction-mapper/pkg/consumer"
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"log"
@@ -21,7 +22,10 @@ var (
 		bank        string
 		account     string
 		accountType string
-	}{}
+		config      string
+	}{
+		config: "config.yaml",
+	}
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -36,6 +40,16 @@ var rootCmd = &cobra.Command{
 			Type: rootArg.accountType,
 		}
 		log.Printf("args: %v", rootArg)
+
+		log.Printf("loading config from file: %s", rootArg.config)
+		bs, err := os.ReadFile(rootArg.config)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		conf, err := config.NewConfig(bs)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		bankPlugin, err := bank.Registry.Get(bankName)
 		if err != nil {
@@ -59,7 +73,7 @@ var rootCmd = &cobra.Command{
 
 		log.Printf("example transaction:%+v\n", transactions[0])
 
-		consumerPlugin, err := consumer.Registry.Get(consumerName)
+		consumerPlugin, err := consumer.Registry.Get(consumerName, conf)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -104,6 +118,7 @@ func init() {
 	rootCmd.Flags().StringVarP(&rootArg.bank, "bank", "b", rootArg.bank, "bank name")
 	rootCmd.Flags().StringVarP(&rootArg.accountType, "account-type", "z", rootArg.accountType, "[optional]account type")
 	rootCmd.Flags().StringVarP(&rootArg.account, "account", "a", rootArg.account, "account name")
+	rootCmd.Flags().StringVarP(&rootArg.config, "config", "f", rootArg.config, "config file path")
 
 	_ = rootCmd.MarkFlagRequired("input")
 	rootCmd.MarkFlagsRequiredTogether("input", "consumer", "bank", "account")

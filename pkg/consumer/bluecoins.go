@@ -16,12 +16,14 @@ var (
 )
 
 func init() {
-	Registry.Register(consumerBlueCoins.Name(), func() Plugin {
+	Registry.Register(consumerBlueCoins.Name(), func(c *config.Config) Plugin {
+		consumerBlueCoins.LoadConf(c)
 		return consumerBlueCoins
 	})
 }
 
 type blueCoins struct {
+	config.Loader
 }
 
 func (b *blueCoins) Name() string {
@@ -35,7 +37,7 @@ func (b *blueCoins) Transform(transactions []transaction.Transaction, ai transac
 			log.Printf("found transaction with non-cny currency: %+v", item)
 		}
 		// 二级分类
-		parentCategory, category := config.Config.InferCategory(item)
+		parentCategory, category := b.GetConf().InferCategory(item)
 		bt := blueCoinsTransaction{
 			Amount:         strconv.FormatFloat(math.Abs(item.Amount), 'f', 2, 64),
 			Notes:          item.Description,
@@ -46,7 +48,7 @@ func (b *blueCoins) Transform(transactions []transaction.Transaction, ai transac
 			AccountType:    ai.Type,
 			Account:        ai.Name,
 		}
-		if toAccountType, toAccountName := config.Config.InferTransferToAccount(item, ai); toAccountName != "" {
+		if toAccountType, toAccountName := b.GetConf().InferTransferToAccount(item, ai); toAccountName != "" {
 			bt.Type = "t"
 			bt.toAccountType = toAccountType
 			bt.toAccountName = toAccountName

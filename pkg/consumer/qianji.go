@@ -12,12 +12,15 @@ var (
 )
 
 func init() {
-	Registry.Register(consumerQianJi.Name(), func() Plugin {
+	Registry.Register(consumerQianJi.Name(), func(c *config.Config) Plugin {
+		consumerQianJi.LoadConf(c)
 		return consumerQianJi
 	})
 }
 
-type qianJi struct{}
+type qianJi struct {
+	config.Loader
+}
 
 func (q *qianJi) Name() string {
 	return "qianji"
@@ -25,10 +28,10 @@ func (q *qianJi) Name() string {
 
 func (q *qianJi) Transform(transactions []transaction.Transaction, info transaction.AccountInfo) (interface{}, error) {
 	result := lo.Map[transaction.Transaction, qianJiTransaction](transactions, func(item transaction.Transaction, index int) qianJiTransaction {
-		_, c := config.Config.InferCategory(item)
+		_, c := q.GetConf().InferCategory(item)
 
 		var tType, counterpartAccount string
-		if _, toAccount := config.Config.InferTransferToAccount(item, info); toAccount != "" {
+		if _, toAccount := q.GetConf().InferTransferToAccount(item, info); toAccount != "" {
 			tType = "转账"
 			counterpartAccount = toAccount
 		} else if item.Amount > 0 {
