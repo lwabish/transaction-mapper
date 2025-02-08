@@ -20,6 +20,7 @@
 
 ## 使用方式
 
+### 命令行模式
 1. 从银行导出交易明细文件
 2. 运行命令，完成转换(`go run main.go -h`查看完整命令帮助)
     ```bash
@@ -27,14 +28,18 @@
     go run main.go \
       -i cmbCredit-2501.json \
       -b cmbCredit \
-      -c bluecoins \
+      -a bluecoins \
       -z 信用卡 \
-      -a 【信用卡】招商银行
+      -t 【信用卡】招商银行
     # 更多组合：
     # 工行信用卡/储蓄卡(icbc+bluecoins)
     # 招行储蓄卡(cmb+bluecoins)
     ```
 3. 将生成的模板导入到记账app中
+
+### web模式
+
+todo
 
 ## 关于记账
 
@@ -53,6 +58,7 @@
 - ✅config解析优化
 - ✅server模式
 - 前端界面
+- swagger & doc
 - 支持跳过某些对冲类交易
 - 文档：各银行导出的方法
 - release binary
