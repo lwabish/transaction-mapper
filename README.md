@@ -51,7 +51,7 @@
 - ✅cobra flag parser & multi cmd
 - ✅账户信息页从flag中解析
 - ✅config解析优化
-- server模式
+- ✅server模式
 - 前端界面
 - 支持跳过某些对冲类交易
 - 文档：各银行导出的方法
