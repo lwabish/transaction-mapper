@@ -56,3 +56,5 @@
 - 支持跳过某些对冲类交易
 - 文档：各银行导出的方法
 - release binary
+- ci
+- e2e test
