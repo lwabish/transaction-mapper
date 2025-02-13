@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/lwabish/transaction-mapper/pkg/bank"
+	"github.com/lwabish/transaction-mapper/pkg/consumer"
 	"github.com/spf13/cobra"
 	"io"
 	"log"
@@ -18,7 +21,12 @@ var serveCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		r := gin.Default()
-		r.Use(gin.Recovery())
+
+		config := cors.DefaultConfig()
+		config.AllowAllOrigins = true
+		config.AddAllowHeaders("Content-Disposition")
+
+		r.Use(gin.Recovery(), cors.New(config))
 		r.GET("/", func(c *gin.Context) {
 			c.JSON(200, gin.H{"Hello": "transaction mapper server"})
 		})
@@ -60,6 +68,7 @@ var serveCmd = &cobra.Command{
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
+			c.Header("Access-Control-Expose-Headers", "Content-Disposition")
 			c.FileAttachment(dstFile, dstFile)
 		})
 		if err := r.Run(); err != nil {
