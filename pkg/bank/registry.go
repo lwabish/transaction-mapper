@@ -1,6 +1,9 @@
 package bank
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/samber/lo"
+)
 
 var (
 	Registry = &registry{
@@ -25,4 +28,8 @@ func (r *registry) Get(name string) (Plugin, error) {
 
 func (r *registry) register(name string, c constructor) {
 	r.constructors[name] = c
+}
+
+func (r *registry) List() []string {
+	return lo.Keys(r.constructors)
 }

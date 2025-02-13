@@ -30,6 +30,12 @@ var serveCmd = &cobra.Command{
 		r.GET("/", func(c *gin.Context) {
 			c.JSON(200, gin.H{"Hello": "transaction mapper server"})
 		})
+		r.GET("/banks", func(c *gin.Context) {
+			c.JSON(200, gin.H{"data": bank.Registry.List()})
+		})
+		r.GET("/apps", func(c *gin.Context) {
+			c.JSON(200, gin.H{"data": consumer.Registry.List()})
+		})
 		r.POST("/transform", func(c *gin.Context) {
 			formFile, err := c.FormFile("input")
 			if err != nil {

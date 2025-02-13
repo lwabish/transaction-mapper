@@ -3,6 +3,7 @@ package consumer
 import (
 	"fmt"
 	"github.com/lwabish/transaction-mapper/pkg/config"
+	"github.com/samber/lo"
 )
 
 var (
@@ -28,4 +29,9 @@ func (r *registry) Get(name string, config *config.Config) (Plugin, error) {
 
 func (r *registry) Register(name string, c constructor) {
 	r.constructors[name] = c
+}
+
+// todo: extract common parent
+func (r *registry) List() []string {
+	return lo.Keys(r.constructors)
 }
