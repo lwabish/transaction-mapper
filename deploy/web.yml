@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-mapper-web
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: transaction-mapper-web
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: transaction-mapper-web
+  name: transaction-mapper-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transaction-mapper-web
+  template:
+    metadata:
+      labels:
+        app: transaction-mapper-web
+      name: transaction-mapper-web
+    spec:
+      containers:
+      - image: lwabish/transaction-mapper-web:v0.0.3-test2
+        imagePullPolicy: IfNotPresent
+        name: transaction-mapper-web
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: transaction-mapper-web
+spec:
+  rules:
+  - host: transaction-mapper-web.wubw.fun
+    http:
+      paths:
+      - backend:
+          service:
+            name: transaction-mapper-web
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: transaction-mapper-backend
+            port:
+              number: 8080
+        path: /api
+        pathType: Prefix
