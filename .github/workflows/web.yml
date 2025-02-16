@@ -45,7 +45,7 @@ jobs:
           rm -f kustomization.yaml
 
       - name: Pull latest changes
-        run: git pull
+        run: git pull origin main
 
       - name: Commit and push updated Kubernetes deployment
         uses: stefanzweifel/git-auto-commit-action@v5.1.0
