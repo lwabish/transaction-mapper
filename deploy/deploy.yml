@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction-mapper
+  labels:
+    app: transaction-mapper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transaction-mapper
+  template:
+    metadata:
+      name: transaction-mapper
+      labels:
+        app: transaction-mapper
+    spec:
+      containers:
+        - name: transaction-mapper
+          image: "lwabish/transaction-mapper:v0.0.2-test6"
+          args:
+            - "serve"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-mapper
+spec:
+  selector:
+    app: transaction-mapper
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+---
