@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+#    permissions:
+#      contents: write
     steps:
       - name: Setup ko
         uses: ko-build/setup-ko@v0.8
@@ -26,9 +28,4 @@ jobs:
         run: KO_DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/transaction-mapper ko resolve -f deploy/template.yml --bare --tags=$(git describe --tags) --tag-only > deploy/deployment.yml
 
       - name: Commit and push updated Kubernetes deployment
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add deploy/deployment.yml
-          git commit -m "Update image tag to $IMAGE_TAG"
-          git push origin HEAD:main
+        uses: stefanzweifel/git-auto-commit-action@v5.1.0
