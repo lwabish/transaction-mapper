@@ -17,8 +17,6 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -31,3 +29,5 @@ jobs:
 
       - name: Commit and push updated Kubernetes deployment
         uses: stefanzweifel/git-auto-commit-action@v5.1.0
+        with:
+          branch: main
