@@ -27,16 +27,17 @@ var serveCmd = &cobra.Command{
 		config.AddAllowHeaders("Content-Disposition")
 
 		r.Use(gin.Recovery(), cors.New(config))
-		r.GET("/", func(c *gin.Context) {
+		api := r.Group("/api/v1")
+		api.GET("/", func(c *gin.Context) {
 			c.JSON(200, gin.H{"Hello": "transaction mapper server"})
 		})
-		r.GET("/banks", func(c *gin.Context) {
+		api.GET("/banks", func(c *gin.Context) {
 			c.JSON(200, gin.H{"data": bank.Registry.List()})
 		})
-		r.GET("/apps", func(c *gin.Context) {
+		api.GET("/apps", func(c *gin.Context) {
 			c.JSON(200, gin.H{"data": consumer.Registry.List()})
 		})
-		r.POST("/transform", func(c *gin.Context) {
+		api.POST("/transform", func(c *gin.Context) {
 			formFile, err := c.FormFile("input")
 			if err != nil {
 				log.Printf("get form file error: %s", err)

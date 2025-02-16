@@ -54,4 +54,12 @@ spec:
                 name: transaction-mapper-web
                 port:
                   number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: transaction-mapper-backend
+                port:
+                  number: 8080
       host: transaction-mapper-web.wubw.fun
+

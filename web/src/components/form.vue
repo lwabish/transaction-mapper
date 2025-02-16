@@ -69,9 +69,15 @@ const account = ref('');
 const accountType = ref('');
 
 // 假设你的API基础URL是这个，请根据实际情况修改
-const API_BASE_URL = 'http://transaction-mapper-backend:8080';
+let API_BASE_URL = '';
 
 onMounted(async () => {
+  const protocol = window.location.protocol;
+  const host = window.location.host;
+  API_BASE_URL = `${protocol}//${host}/api/v1`;
+  if (API_BASE_URL.includes('localhost')) {
+    API_BASE_URL = 'http://localhost:8080/api/v1';
+  }
   await fetchRemoteData();
 });
 
