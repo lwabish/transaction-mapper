@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup ko
-        uses: ko-build/setup-ko
+        uses: ko-build/setup-ko@v0.8
 
       - name: Checkout code
         uses: actions/checkout@v2
