@@ -2,8 +2,8 @@ name: Build and Deploy Web
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -27,4 +27,4 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/transaction-mapper-web:latest
+            ${{ secrets.DOCKER_USERNAME }}/transaction-mapper-web:$(git describe --tags)
