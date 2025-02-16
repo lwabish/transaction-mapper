@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build docker image and generate yaml with ko
-        run: KO_DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/transaction-mapper ko resolve -f deploy/template.yml --bare --tags=$(git describe --tags) --tag-only > deploy/backend.yml
+        run: KO_DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/transaction-mapper ko resolve -f deploy/backend-template.yml --bare --tags=$(git describe --tags) --tag-only > deploy/backend.yml
 
       - name: Commit and push updated Kubernetes deployment
         uses: stefanzweifel/git-auto-commit-action@v5.1.0
