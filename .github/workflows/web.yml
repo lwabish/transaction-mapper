@@ -27,4 +27,4 @@ jobs:
           file: ./web/Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/transaction-mapper-web:latest
+            ${{ secrets.DOCKER_USERNAME }}/transaction-mapper-web:latest
