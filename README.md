@@ -58,8 +58,7 @@ todo
 - ✅config解析优化
 - ✅server模式
 - ✅前端界面
+- ✅ci
 - 文档：各银行导出的方法
 - 支持跳过某些对冲类交易
-- release binary
-- ci
-- e2e test
+- release image
