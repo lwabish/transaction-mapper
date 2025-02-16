@@ -33,3 +33,12 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/transaction-mapper-web:${{ env.TAG_NAME }}
+
+      - name: Replace image tag
+        run: |
+          sed -i 's/TO_BE_REPLACED/${{ env.TAG_NAME }}/g' deploy/web.yml
+
+      - name: Commit and push updated Kubernetes deployment
+        uses: stefanzweifel/git-auto-commit-action@v5.1.0
+        with:
+          branch: main

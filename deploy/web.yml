@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: transaction-mapper-web
-          image: "lwabish/transaction-mapper-web:${{TO_BE_REPLACED}}"
+          image: "lwabish/transaction-mapper-web:TO_BE_REPLACED"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
