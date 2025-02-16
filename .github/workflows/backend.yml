@@ -1,7 +1,6 @@
 name: Build and Deploy Docker Image
 
 on:
-  # go change
   push:
     tags:
       - 'v*'
@@ -25,7 +24,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}  # Docker Hub 密码
 
       - name: Build docker image and generate yaml with ko
-        run: KO_DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/transaction-mapper ko resolve -f deploy/template.yml --bare --tags=$(git describe --tags) --tag-only > deploy/deployment.yml
+        run: KO_DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/transaction-mapper ko resolve -f deploy/template.yml --bare --tags=$(git describe --tags) --tag-only > deploy/deploy.yml
 
       - name: Commit and push updated Kubernetes deployment
         uses: stefanzweifel/git-auto-commit-action@v5.1.0
