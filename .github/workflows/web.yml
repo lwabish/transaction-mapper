@@ -5,10 +5,6 @@ on:
     tags:
       - 'v*'
 
-concurrency:
-  group: file-committer
-  cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,6 +43,9 @@ jobs:
           kustomize edit set image ${{ secrets.DOCKER_USERNAME }}/transaction-mapper-web:${{ env.TAG_NAME }}
           kustomize build > deploy/web.yml
           rm -f kustomization.yaml
+
+      - name: Pull latest changes
+        run: git pull
 
       - name: Commit and push updated Kubernetes deployment
         uses: stefanzweifel/git-auto-commit-action@v5.1.0
