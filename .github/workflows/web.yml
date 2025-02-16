@@ -34,9 +34,15 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/transaction-mapper-web:${{ env.TAG_NAME }}
 
-      - name: Replace image tag
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      - name: Generate Kubernetes Yaml file
         run: |
-          sed -i 's/TO_BE_REPLACED/${{ env.TAG_NAME }}/g' deploy/web.yml
+          kustomize create --resources deploy/web.yml
+          kustomize edit set image ${{ secrets.DOCKER_USERNAME }}/transaction-mapper-web:${{ env.TAG_NAME }}
+          kustomize build > deploy/web.yml
+          rm -f kustomization.yaml
 
       - name: Commit and push updated Kubernetes deployment
         uses: stefanzweifel/git-auto-commit-action@v5.1.0
