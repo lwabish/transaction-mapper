@@ -23,7 +23,7 @@ jobs:
       - name: Build push docker image
         uses: docker/build-push-action@v6.13.0
         with:
-          context: ./web
+          context: "{{defaultContext}}:web"
           file: ./web/Dockerfile
           push: true
           tags: |
