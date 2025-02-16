@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate Kubernetes Yaml file
         run: |
-          kustomize create --resources deploy/web.yml
+          kustomize create --resources deploy/web-template.yml
           kustomize edit set image ${{ secrets.DOCKER_USERNAME }}/transaction-mapper-web:${{ env.TAG_NAME }}
           kustomize build > deploy/web.yml
           rm -f kustomization.yaml
