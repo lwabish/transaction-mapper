@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: transaction-mapper
+  name: transaction-mapper-backend
   labels:
-    app: transaction-mapper
+    app: transaction-mapper-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: transaction-mapper
+      app: transaction-mapper-backend
   template:
     metadata:
-      name: transaction-mapper
+      name: transaction-mapper-backend
       labels:
-        app: transaction-mapper
+        app: transaction-mapper-backend
     spec:
       containers:
-        - name: transaction-mapper
+        - name: transaction-mapper-backend
           image: "ko://github.com/lwabish/transaction-mapper"
           args:
             - "serve"
@@ -29,10 +29,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: transaction-mapper
+  name: transaction-mapper-backend
 spec:
   selector:
-    app: transaction-mapper
+    app: transaction-mapper-backend
   ports:
     - protocol: TCP
       port: 8080
