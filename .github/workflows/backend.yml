@@ -22,8 +22,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  # Docker Hub 用户名
           password: ${{ secrets.DOCKER_PASSWORD }}  # Docker Hub 密码
 
-      - name: Generate yaml with ko
-        run: KO_DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/transaction-mapper ko resolve -f deploy/template.yml --bare --tags=$(git describe --tags) --tag-only
+      - name: Build docker image and generate yaml with ko
+        run: KO_DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/transaction-mapper ko resolve -f deploy/template.yml --bare --tags=$(git describe --tags) --tag-only > deploy/deployment.yml
 
       - name: Commit and push updated Kubernetes deployment
         run: |
