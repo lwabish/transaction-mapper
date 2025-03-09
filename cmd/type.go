@@ -1,5 +1,10 @@
 package cmd
 
+import (
+	"os"
+	"path"
+)
+
 type arg struct {
 	input       string
 	config      string
@@ -10,5 +15,6 @@ type arg struct {
 }
 
 func defaultArg() *arg {
-	return &arg{config: "config.yaml"}
+	// https://ko.build/features/static-assets/
+	return &arg{config: path.Join(os.Getenv("KO_DATA_PATH"), "config.yaml")}
 }
