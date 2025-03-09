@@ -29,7 +29,7 @@ spec:
       name: transaction-mapper-web
     spec:
       containers:
-      - image: lwabish/transaction-mapper-web:v0.0.5
+      - image: lwabish/transaction-mapper-web:v0.0.5-test
         imagePullPolicy: IfNotPresent
         name: transaction-mapper-web
         ports:
