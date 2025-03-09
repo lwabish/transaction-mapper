@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lwabish/transaction-mapper/pkg/bank"
 	"github.com/lwabish/transaction-mapper/pkg/consumer"
+	"github.com/lwabish/transaction-mapper/pkg/version"
 	"github.com/spf13/cobra"
 	"io"
 	"log"
@@ -30,6 +31,9 @@ var serveCmd = &cobra.Command{
 		api := r.Group("/api/v1")
 		api.GET("/", func(c *gin.Context) {
 			c.JSON(200, gin.H{"Hello": "transaction mapper server"})
+		})
+		api.GET("/version", func(c *gin.Context) {
+			c.JSON(200, gin.H{"data": version.Version})
 		})
 		api.GET("/banks", func(c *gin.Context) {
 			c.JSON(200, gin.H{"data": bank.Registry.List()})
