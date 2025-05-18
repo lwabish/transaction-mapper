@@ -55,9 +55,9 @@ func (b *blueCoins) Transform(transactions []transaction.Transaction, ai transac
 			bt.Amount = fmt.Sprintf("-%s", bt.Amount)
 			bt.ParentCategory, bt.Category = "(Transfer)", "(Transfer)"
 		} else if item.Amount > 0 {
-			bt.Type = "i"
-		} else if item.Amount < 0 {
 			bt.Type = "e"
+		} else if item.Amount < 0 {
+			bt.Type = "i"
 		}
 		return bt
 	})
