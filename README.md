@@ -64,3 +64,28 @@ todo
 - release image/基于容器的使用说明
 - 多用户(接入logto)
 - 基于用户的，可维护配置的config/账户信息
+
+# prompt
+
+使用LLM快速针对不同的结构生成结构体，prompt：
+
+```text
+我将提供你一个用逗号分隔的csv标题行，请将每一个csv列对应go结构体的一个字段，示例标题行及结构体如下
+示例标题行：交易日期,记账日期,摘要,交易场所,交易国家或地区简称,交易金额(收入),交易金额(支出)
+示例结构体：
+type icbcTxn struct {
+	TranDate             string `csv:"交易日期"`
+	AccountDate          string `csv:"记账日期"`
+	Abstract             string `csv:"摘要"`
+	Platform             string `csv:"交易场所"`
+	CountryRegion        string `csv:"交易国家或地区简称"`
+	TranAmountIncome     string `csv:"交易金额(收入)"`
+	TranAmountOutcome    string `csv:"交易金额(支出)"`
+	TranCurrency         string `csv:"交易币种"`
+	AccountAmountIncome  string `csv:"记账金额(收入)"`
+	AccountAmountOutcome string `csv:"记账金额(支出)"`
+	AccountCurrency      string `csv:"记账币种"`
+	Balance              string `csv:"余额"`
+	CounterpartyName     string `csv:"对方户名"`
+注意：结构体的字段名称请根据标题行翻译成准确的英文，使用首字母大写的驼峰形式，类型全部是string
+```
