@@ -9,9 +9,9 @@
 
 目前支持的银行:
 
-- [中国工商银行](https://mybank.icbc.com.cn/icbc/newperbank/perbank3/frame/frame_index.jsp)
-- [招商银行信用卡](https://www.cmbchina.com/)
-- [招商银行储蓄卡](https://www.cmbchina.com/)（招行储蓄卡和信用卡导出的途径和格式不一样，需要分开解析）
+- [中国工商银行](https://mybank.icbc.com.cn/icbc/newperbank/perbank3/frame/frame_index.jsp) （网页导出csv）
+- [招商银行信用卡](https://www.cmbchina.com/) (目前适配的格式是通过https://app.parseur.com/解析的招行信用卡账单pdf导出的json文件)
+- [招商银行储蓄卡](https://www.cmbchina.com/)（从windows版本的银行客户端可以导出csv）
 
 目前支持的记账app:
 
@@ -39,7 +39,7 @@
 
 ### web模式
 
-todo
+目前已实现基本的前后端并私有化部署使用，尚未公开。如果有兴趣可以参考代码自行部署。
 
 ## 关于记账
 
@@ -51,19 +51,12 @@ todo
 
 # todo
 
-- ✅支持解析转账类交易
-- ✅支持钱迹
-- ✅cobra flag parser & multi cmd
-- ✅账户信息页从flag中解析
-- ✅config解析优化
-- ✅server模式
-- ✅前端界面
-- ✅ci
-- 文档：各银行导出的方法
+- 解析招行信用卡的账单邮件
 - 支持跳过交易
-- release image/基于容器的使用说明
+- 引入金额和备注共同进行分类推导
 - 多用户(接入logto)
 - 基于用户的，可维护配置的config/账户信息
+- release image/基于容器的使用说明
 
 # prompt
 
