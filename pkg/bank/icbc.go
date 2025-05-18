@@ -74,8 +74,8 @@ func (i icbcTxn) ParseTime() time.Time {
 
 func (i icbcTxn) ParseAmount() float64 {
 	return lo.Ternary(i.AccountAmountOutcome != "",
-		-1*util.ParseFloat(i.AccountAmountOutcome),
-		util.ParseFloat(i.AccountAmountIncome),
+		util.ParseFloat(i.AccountAmountOutcome),
+		-1*util.ParseFloat(i.AccountAmountIncome),
 	)
 }
 
