@@ -33,7 +33,7 @@ func (in *cmbCredit) Parse(data string) ([]transaction.Transaction, error) {
 	}
 
 	return transaction.NewTransactionFromProvider(
-		lo.Map(obj.Data.Detail, func(item DetailBill, index int) transaction.Provider { return item }),
+		lo.Map(obj.TransactionDetails, func(item TransactionDetail, index int) transaction.Provider { return item }),
 	), nil
 }
 
@@ -41,86 +41,50 @@ func (in *cmbCredit) PreProcess(data []byte) (string, error) {
 	return string(data), nil
 }
 
-type cmbCreditTxn struct {
-	RespCode string `json:"respCode"`
-	RespMsg  string `json:"respMsg"`
-	Data     Data   `json:"data"`
-}
-
-type Data struct {
-	RMBBillInfo    RMBBillInfo    `json:"rmbBillInfo"`
-	DollarBillInfo DollarBillInfo `json:"dollarBillInfo"`
-	Detail         []DetailBill   `json:"detail"`
-}
-
-type RMBBillInfo struct {
-	Amount         string `json:"amount"`
-	BillCycleStart string `json:"billCycleStart"`
-	BillCycleEnd   string `json:"billCycleEnd"`
-	RepaymentDate  string `json:"repaymentDate"`
-	MinPayment     string `json:"minPayment"`
-	LastBill       string `json:"lastBill"`
-	LastRepayment  string `json:"lastRepayment"`
-	CreditAmount   string `json:"creditAmount"`
-	Interest       string `json:"interest"`
-	DebitAmount    string `json:"debitAmount"`
-}
-
-type DollarBillInfo struct {
-	Amount         string `json:"amount"`
-	BillCycleStart string `json:"billCycleStart"`
-	BillCycleEnd   string `json:"billCycleEnd"`
-	RepaymentDate  string `json:"repaymentDate"`
-	MinPayment     string `json:"minPayment"`
-	LastBill       string `json:"lastBill"`
-	LastRepayment  string `json:"lastRepayment"`
-	CreditAmount   string `json:"creditAmount"`
-	Interest       string `json:"interest"`
-	DebitAmount    string `json:"debitAmount"`
-}
-
-type DetailBill struct {
-	BillId             string `json:"billId"`
-	BillType           string `json:"billType"`
-	BillDate           string `json:"billDate"`
-	BillMonth          string `json:"billMonth"`
-	Org                string `json:"org"`
-	TransactionAmount  string `json:"transactionAmount"`
-	Amount             string `json:"amount"`
+type TransactionDetail struct {
+	//fixme: 缺少年份信息，目前用当前年份代替
+	SoldDate           string `json:"sold_date"`
+	PostedDate         string `json:"posted_date"`
 	Description        string `json:"description"`
-	PostingDate        string `json:"postingDate"`
-	Location           string `json:"location"`
-	TotalStages        string `json:"totalStages"`
-	CurrentStages      string `json:"currentStages"`
-	RemainingStages    string `json:"remainingStages"`
-	EffectiveDate      string `json:"effectiveDate"`
-	TransactionType    string `json:"transactionType"`
-	CardNo             string `json:"cardNo"`
-	UniqueNo           string `json:"uniqueNo"`
-	CommonDescFlag     string `json:"commonDescFlag"`
-	RefundTimeHideFlag string `json:"refundTimeHideFlag"`
-	StageOrderNo       string `json:"stageOrderNo"`
-	StageTypeFlag      string `json:"stageTypeFlag"`
-	SceneLimitType     string `json:"sceneLimitType"`
-	SceneLimitAmount   string `json:"sceneLimitAmount"`
+	RmbAmount          string `json:"rmb_amount"`
+	CardNo             string `json:"card_no"`
+	OriginalTranAmount string `json:"original_tran_amount"`
 }
 
-func (d DetailBill) ParseTime() time.Time {
-	t, err := time.Parse("20060102150405", d.BillDate)
+type cmbCreditTxn struct {
+	CreditLimit           string              `json:"credit_limit"`
+	PaymentDueDate        string              `json:"payment_due_date"`
+	CurrentBalance        string              `json:"current_balance"`
+	MinimumPayment        string              `json:"minimum_payment"`
+	StatementDate         string              `json:"statement_date"`
+	TransactionDetails    []TransactionDetail `json:"transaction_details"`
+	CurrentBalanceSummary string              `json:"current_balance_summary"`
+	BalanceBF             string              `json:"balance_b_f"`
+	Payment               string              `json:"payment"`
+	NewCharges            string              `json:"new_charges"`
+	Adjustment            string              `json:"adjustment"`
+	Interest              string              `json:"interest"`
+}
+
+func (d TransactionDetail) ParseTime() time.Time {
+	currentYear := time.Now().Year()
+	parsedTime, err := time.Parse("01/02", d.SoldDate)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	return t
+	yearReplacedTime := time.Date(currentYear, parsedTime.Month(), parsedTime.Day(),
+		0, 0, 0, 0, parsedTime.Location())
+	return yearReplacedTime
 }
 
-func (d DetailBill) ParseAmount() float64 {
-	return -1*util.ParseFloat(d.TransactionAmount)
+func (d TransactionDetail) ParseAmount() float64 {
+	return util.ParseFloat(d.RmbAmount)
 }
 
-func (d DetailBill) ParseCNY() bool {
+func (d TransactionDetail) ParseCNY() bool {
 	return true
 }
 
-func (d DetailBill) ParseDescription() string {
+func (d TransactionDetail) ParseDescription() string {
 	return d.Description
 }

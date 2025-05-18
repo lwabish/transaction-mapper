@@ -89,3 +89,30 @@ type icbcTxn struct {
 	CounterpartyName     string `csv:"对方户名"`
 注意：结构体的字段名称请根据标题行翻译成准确的英文，使用首字母大写的驼峰形式，类型全部是string
 ```
+
+```text
+我将给你提供一个json文件，请根据该json结构体，生成用于反序列化的go结构体。字段名称全部转换为首字母大写的驼峰形式，类型全部是string。
+{
+    "credit_limit": "¥ 62,000.00",
+    "payment_due_date": "2025年05月08日",
+    "current_balance": "¥ 4,409.63",
+    "minimum_payment": "¥ 220.48",
+    "statement_date": "2025年04月20日",
+    "transaction_details": [
+        {
+            "sold_date": "04/08",
+            "posted_date": "04/08",
+            "description": "自动还款",
+            "rmb_amount": "-3,859.80",
+            "card_no": "7139",
+            "original_tran_amount": "-3,859.80"
+        }
+    ],
+    "current_balance_summary": "¥ 4,409.63",
+    "balance_b_f": "¥ 3,859.80",
+    "payment": "¥ 3,859.80",
+    "new_charges": "¥ 4,738.97",
+    "adjustment": "¥ 329.34",
+    "interest": "¥ 0.00"
+}
+```
