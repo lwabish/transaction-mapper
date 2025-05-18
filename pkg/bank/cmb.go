@@ -65,9 +65,9 @@ func (c cmbTxn) ParseTime() time.Time {
 
 func (c cmbTxn) ParseAmount() float64 {
 	if c.Outcome != "" {
-		return -1 * util.ParseFloat(c.Outcome)
+		return util.ParseFloat(c.Outcome)
 	} else {
-		return util.ParseFloat(c.Income)
+		return -1 * util.ParseFloat(c.Income)
 	}
 }
 
