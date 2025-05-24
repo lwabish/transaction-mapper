@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: transaction-mapper-backend
-          image: "lwabish/transaction-mapper:v0.0.10"
+          image: "lwabish/transaction-mapper:v0.0.11"
           args:
             - "serve"
           imagePullPolicy: IfNotPresent
