@@ -2,13 +2,14 @@ package consumer
 
 import (
 	"fmt"
-	"github.com/lwabish/transaction-mapper/pkg/config"
-	"github.com/lwabish/transaction-mapper/pkg/transaction"
-	"github.com/samber/lo"
 	"log"
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/lwabish/transaction-mapper/pkg/config"
+	"github.com/lwabish/transaction-mapper/pkg/transaction"
+	"github.com/samber/lo"
 )
 
 var (
@@ -47,6 +48,8 @@ func (b *blueCoins) Transform(transactions []transaction.Transaction, ai transac
 			Category:       category,
 			AccountType:    ai.Type,
 			Account:        ai.Name,
+			Currency:       lo.Ternary(item.CNY, "CNY", "USD"), // todo: support NON CNY
+			ConversionRate: lo.Ternary(item.CNY, "1", "7"),
 		}
 		if toAccountType, toAccountName := b.GetConf().InferTransferToAccount(item, ai); toAccountName != "" {
 			bt.Type = "t"
