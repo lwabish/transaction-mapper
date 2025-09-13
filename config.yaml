@@ -5,7 +5,9 @@ transferAccountRules:
     toAccountName: 【信用卡】招商银行
 dualLevel: true
 levelSplitter: '|'
-default: "食|一日三餐"
+default:
+  outcome: "食|一日三餐"
+  income: "其它|其它"
 # 跳过
 # fixme: 多个账户的同一笔转账会重复
 skip: {}
