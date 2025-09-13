@@ -42,7 +42,7 @@ func (b *blueCoins) Transform(transactions []transaction.Transaction, ai transac
 		bt := blueCoinsTransaction{
 			Amount:         strconv.FormatFloat(math.Abs(item.Amount), 'f', 2, 64),
 			Notes:          item.Description,
-			Date:           item.Time.Format("01-02-2006"),
+			Date:           item.Time.Format("01/02/2006"),
 			ItemOrPayee:    "自动导入",
 			ParentCategory: parentCategory,
 			Category:       category,
