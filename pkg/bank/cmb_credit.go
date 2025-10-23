@@ -2,11 +2,12 @@ package bank
 
 import (
 	"encoding/json"
+	"log"
+	"time"
+
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"github.com/lwabish/transaction-mapper/pkg/util"
 	"github.com/samber/lo"
-	"log"
-	"time"
 )
 
 type cmbCredit struct{}
@@ -68,6 +69,9 @@ type cmbCreditTxn struct {
 
 func (d TransactionDetail) ParseTime() time.Time {
 	currentYear := time.Now().Year()
+	if d.SoldDate == "" {
+		d.SoldDate = d.PostedDate
+	}
 	parsedTime, err := time.Parse("01/02", d.SoldDate)
 	if err != nil {
 		log.Fatalln(err)
