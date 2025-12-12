@@ -8,6 +8,8 @@ import (
 	"github.com/lwabish/transaction-mapper/pkg/transaction"
 	"github.com/lwabish/transaction-mapper/pkg/util"
 	"github.com/samber/lo"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 )
 
 type cmbCredit struct{}
@@ -39,7 +41,34 @@ func (in *cmbCredit) Parse(data string) ([]transaction.Transaction, error) {
 }
 
 func (in *cmbCredit) PreProcess(data []byte) (string, error) {
-	return string(data), nil
+	result := string(data)
+
+	// 获取 transaction_details 数组
+	transactionDetails := gjson.Get(result, "transaction_details")
+	if !transactionDetails.Exists() {
+		return result, nil
+	}
+
+	// 过滤掉 description=自动还款 的交易
+	var filteredDetails []interface{}
+	transactionDetails.ForEach(func(key, value gjson.Result) bool {
+		description := value.Get("description").String()
+		if description != "自动还款" {
+			// 将 gjson.Result 转换为 map[string]interface{}
+			filteredDetails = append(filteredDetails, value.Value())
+		}
+		return true
+	})
+
+	// 将过滤后的数组重新设置回 JSON
+	var err error
+	result, err = sjson.Set(result, "transaction_details", filteredDetails)
+	if err != nil {
+		log.Printf("Failed to update transaction_details: %v", err)
+		return string(data), nil
+	}
+
+	return result, nil
 }
 
 type TransactionDetail struct {
