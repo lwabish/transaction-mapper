@@ -1,0 +1,21 @@
+# ArgoCD Image Updater Configuration
+# This config enables automatic image updates when new tags are pushed to Docker Hub
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: transaction-mapper-prod
+  annotations:
+    # Enable image updater for backend
+    argocd-image-updater.argoproj.io/image-list: backend=ko://github.com/lwabish/transaction-mapper,web=lwabish/transaction-mapper-web
+    # Configure update strategy for backend
+    argocd-image-updater.argoproj.io/backend.update-strategy: semver
+    argocd-image-updater.argoproj.io/backend.semver.constraint: ">=0.1.0"
+    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^v[0-9]+\.[0-9]+\.[0-9]+$
+    # Configure update strategy for web
+    argocd-image-updater.argoproj.io/web.update-strategy: semver
+    argocd-image-updater.argoproj.io/web.semver.constraint: ">=0.1.0"
+    argocd-image-updater.argoproj.io/web.allow-tags: regexp:^v[0-9]+\.[0-9]+\.[0-9]+$
+    # Write back to Git (optional - if you want to commit image updates)
+    # argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
+    # argocd-image-updater.argoproj.io/git-branch: main

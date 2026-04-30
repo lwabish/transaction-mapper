@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../../helm/transaction-mapper
+
+helmCharts:
+- name: transaction-mapper
+  releaseName: transaction-mapper-prod
+  namespace: transaction-mapper
+  repo: file://../../../helm/transaction-mapper
+  valuesInline:
+    replicaCount: 2
+    backend:
+      image:
+        tag: "latest"  # This will be overridden by ArgoCD
+    web:
+      image:
+        tag: "latest"  # This will be overridden by ArgoCD
+    ingress:
+      hosts:
+        - host: transaction-mapper-web.wubw.fun
+          paths:
+            - path: /
+              pathType: Prefix
+              service: web
+              port: 80
+            - path: /api
+              pathType: Prefix
+              service: backend
+              port: 8080
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi

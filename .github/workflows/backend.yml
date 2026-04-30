@@ -1,4 +1,4 @@
-name: Build and Deploy Backend
+name: Build Backend Image
 
 on:
   push:
@@ -9,7 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
+      packages: write
     steps:
       - name: Setup ko
         uses: ko-build/setup-ko@v0.8
@@ -23,15 +24,24 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build docker image and generate yaml with ko
-        run: KO_DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/transaction-mapper ko resolve -f deploy/backend-template.yml --bare --tags=$(git describe --tags) --tag-only > deploy/backend.yml
-
-      - name: Pull latest changes
+      - name: Extract tag name
+        id: extract_tag
         run: |
-          git config pull.rebase false
-          git pull origin main
+          echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
-      - name: Commit and push updated Kubernetes deployment
-        uses: stefanzweifel/git-auto-commit-action@v5.1.0
-        with:
-          branch: main
+      - name: Build and publish docker image with ko
+        run: |
+          KO_DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/transaction-mapper \
+          ko publish \
+            --base-import-paths \
+            --local \
+            --tags ${{ env.TAG_NAME }} \
+            --tags latest \
+            ko://github.com/lwabish/transaction-mapper
+
+      - name: Update ArgoCD image tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          echo "✅ Backend image built and published: ${{ secrets.DOCKER_USERNAME }}/transaction-mapper:${{ env.TAG_NAME }}"
+          echo "🔄 ArgoCD will automatically detect the new image tag and update the deployment"
+          echo "📝 No code commit required - ArgoCD handles image updates automatically"

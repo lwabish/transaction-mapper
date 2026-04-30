@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../../helm/transaction-mapper
+
+helmCharts:
+- name: transaction-mapper
+  releaseName: transaction-mapper-staging
+  namespace: transaction-mapper-staging
+  repo: file://../../../helm/transaction-mapper
+  valuesInline:
+    replicaCount: 1
+    backend:
+      image:
+        tag: "latest"  # This will be overridden by ArgoCD
+    web:
+      image:
+        tag: "latest"  # This will be overridden by ArgoCD
+    ingress:
+      enabled: false
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi

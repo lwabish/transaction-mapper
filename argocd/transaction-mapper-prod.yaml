@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: transaction-mapper-prod
+  namespace: argocd
+  labels:
+    app: transaction-mapper
+    environment: prod
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lwabish/transaction-mapper.git
+    targetRevision: main
+    path: helm/transaction-mapper/environments/prod
+    kustomize:
+      # Allow ArgoCD to update image tags automatically
+      images:
+        # Backend image - will be updated by ArgoCD Image Updater
+        - name: ko://github.com/lwabish/transaction-mapper
+          newTag: 'latest'
+        # Web image - will be updated by ArgoCD Image Updater
+        - name: lwabish/transaction-mapper-web
+          newTag: 'latest'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: transaction-mapper
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
