@@ -72,7 +72,7 @@ func (in *cmbCredit) PreProcess(data []byte) (string, error) {
 }
 
 type TransactionDetail struct {
-	//fixme: 缺少年份信息，目前用当前年份代替
+	//fixme: 缺少年份信息，目前用当前年份代替, 账单跨年时会有问题
 	SoldDate           string `json:"sold_date"`
 	PostedDate         string `json:"posted_date"`
 	Description        string `json:"description"`

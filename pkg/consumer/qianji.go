@@ -39,6 +39,7 @@ func (q *qianJi) Transform(transactions []transaction.Transaction, info transact
 		} else {
 			tType = "收入"
 		}
+		// todo: 还信用卡有专门的标记
 
 		return qianJiTransaction{
 			Time:     item.Time.Format("2006/01/02 15:04"),
